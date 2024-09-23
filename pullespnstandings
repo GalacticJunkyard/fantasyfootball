@@ -1,8 +1,8 @@
 import requests
-import json
+import os
 
-def fetch_espn_standings(570788430, 2024):
-    url = f"https://fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/570788430"
+def fetch_espn_standings(league_id, season_id):
+    url = f"https://fantasy.espn.com/apis/v3/games/ffl/seasons/{season_id}/segments/0/leagues/{league_id}"
     response = requests.get(url, params={"view": "mStandings"})
     
     if response.status_code == 200:
@@ -31,14 +31,15 @@ def standings_to_html(standings):
     return html
 
 # Example usage
-league_id = "your_league_id_here"
-season_id = 2024
+league_id = 570788430  # Replace with your league ID
+season_id = 2024  # Update if needed
 standings_data = fetch_espn_standings(league_id, season_id)
 standings = parse_standings(standings_data)
 html_code = standings_to_html(standings)
 
 # Save the HTML file
-with open("standings.html", "w") as file:
+html_file_path = os.path.join(os.getcwd(), "standings.html")
+with open(html_file_path, "w") as file:
     file.write(html_code)
 
-print("HTML file generated: standings.html")
+print(f"HTML file generated and saved at: {html_file_path}")
