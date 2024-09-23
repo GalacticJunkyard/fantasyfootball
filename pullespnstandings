@@ -1,7 +1,7 @@
 import requests
 import json
 
-def fetch_espn_standings(league_id, season_id):
+def fetch_espn_standings(570788430, 2024):
     url = f"https://fantasy.espn.com/apis/v3/games/ffl/seasons/{season_id}/segments/0/leagues/{league_id}"
     response = requests.get(url, params={"view": "mStandings"})
     
