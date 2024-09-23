@@ -1,0 +1,44 @@
+import requests
+import json
+
+def fetch_espn_standings(league_id, season_id):
+    url = f"https://fantasy.espn.com/apis/v3/games/ffl/seasons/{season_id}/segments/0/leagues/{league_id}"
+    response = requests.get(url, params={"view": "mStandings"})
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Failed to fetch standings: {response.status_code}")
+
+def parse_standings(standings_data):
+    teams = standings_data["teams"]
+    standings = []
+    
+    for team in teams:
+        team_name = team["location"] + " " + team["nickname"]
+        wins = team["record"]["overall"]["wins"]
+        losses = team["record"]["overall"]["losses"]
+        standings.append({"team_name": team_name, "wins": wins, "losses": losses})
+    
+    return standings
+
+def standings_to_html(standings):
+    html = "<table border='1'><tr><th>Team Name</th><th>Wins</th><th>Losses</th></tr>"
+    for team in standings:
+        html += f"<tr><td>{team['team_name']}</td><td>{team['wins']}</td><td>{team['losses']}</td></tr>"
+    html += "</table>"
+    
+    return html
+
+# Example usage
+league_id = "your_league_id_here"
+season_id = 2024
+standings_data = fetch_espn_standings(league_id, season_id)
+standings = parse_standings(standings_data)
+html_code = standings_to_html(standings)
+
+# Save the HTML file
+with open("standings.html", "w") as file:
+    file.write(html_code)
+
+print("HTML file generated: standings.html")
